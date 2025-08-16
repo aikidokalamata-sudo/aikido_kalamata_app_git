@@ -1,0 +1,54 @@
+name: aikido_kalamata_app
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  flutter_localizations:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  firebase_core: ^3.2.0
+  firebase_auth: ^5.1.1
+  cloud_firestore: ^5.0.2
+  firebase_messaging: ^15.0.1
+  google_sign_in: ^6.2.1
+  url_launcher: ^6.3.0
+  
+  # --- Η ΔΙΟΡΘΩΣΗ ΕΙΝΑΙ ΕΔΩ ---
+  intl: ^0.20.2 
+  
+  firebase_storage: ^12.1.1
+  image_picker: ^1.1.2
+  image: ^4.1.7
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+  flutter_launcher_icons: "^0.13.1"
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/icon/
+
+  fonts:
+    - family: ZonaPro
+      fonts:
+        - asset: assets/fonts/ZonaPro-Regular.ttf
+        - asset: assets/fonts/ZonaPro-Bold.ttf
+          weight: 700
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/icon.png"

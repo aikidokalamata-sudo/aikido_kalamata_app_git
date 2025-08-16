@@ -1,0 +1,35 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "aikido-kalamata-app",
+          "appId": "1:776890628143:android:3a335e08a6f15d1901eeda",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "aikido-kalamata-app",
+          "configurations": {
+            "android": "1:776890628143:android:3a335e08a6f15d1901eeda",
+            "ios": "1:776890628143:ios:0a8ea9a5e45a7e3b01eeda"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ]
+}
