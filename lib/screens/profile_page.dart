@@ -244,7 +244,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   image: const AssetImage('assets/images/techniques_background.png'),
                   fit: BoxFit.cover,
                   colorFilter: ColorFilter.mode(
-                    Colors.white.withOpacity(0.2),
+                    Colors.white.withOpacity(0.3),
                     BlendMode.dstATop,
                   ),
                 ),
