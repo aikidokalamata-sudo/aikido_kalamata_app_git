@@ -39,7 +39,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _loadUserData() async {
     if (!_isLoading) setState(() => _isLoading = true);
-    
+
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       if (mounted) setState(() => _isLoading = false);
@@ -51,7 +51,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
     if (!isAdminClaim) {
       try {
-        final doc = await FirebaseFirestore.instance.collection('members').doc(user.uid).get();
+        final doc = await FirebaseFirestore.instance
+            .collection('members')
+            .doc(user.uid)
+            .get();
         if (doc.exists) {
           _memberData = doc;
         } else {
@@ -62,7 +65,7 @@ class _ProfilePageState extends State<ProfilePage> {
         _memberData = null;
       }
     }
-    
+
     if (mounted) {
       setState(() {
         _isAdmin = isAdminClaim;
@@ -91,13 +94,18 @@ class _ProfilePageState extends State<ProfilePage> {
       final compressedBytes = img.encodeJpg(resizedImage, quality: 85);
       final base64String = base64Encode(compressedBytes);
 
-      await FirebaseFirestore.instance.collection('members').doc(user.uid).update({
+      await FirebaseFirestore.instance
+          .collection('members')
+          .doc(user.uid)
+          .update({
         'photoBase64': base64String,
       });
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Η φωτογραφία προφίλ ενημερώθηκε!'), backgroundColor: Colors.green),
+          const SnackBar(
+              content: Text('Η φωτογραφία προφίλ ενημερώθηκε!'),
+              backgroundColor: Colors.green),
         );
       }
     } catch (e) {
@@ -110,7 +118,7 @@ class _ProfilePageState extends State<ProfilePage> {
     } finally {
       if (mounted) {
         setState(() => _isUploading = false);
-        _loadUserData(); 
+        _loadUserData();
       }
     }
   }
@@ -155,7 +163,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   });
                   Navigator.of(context).pop();
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Το μήνυμά σας στάλθηκε!'), backgroundColor: Colors.green),
+                    const SnackBar(
+                        content: Text('Το μήνυμά σας στάλθηκε!'),
+                        backgroundColor: Colors.green),
                   );
                 }
               },
@@ -185,9 +195,14 @@ class _ProfilePageState extends State<ProfilePage> {
                     children: [
                       Icon(Icons.info_outline, size: 40),
                       SizedBox(height: 10),
-                      Text('Ο λογαριασμός σας δεν έχει ενεργοποιηθεί ακόμα.', textAlign: TextAlign.center, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text('Ο λογαριασμός σας δεν έχει ενεργοποιηθεί ακόμα.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold)),
                       SizedBox(height: 8),
-                      Text('Παρακαλούμε επικοινωνήστε με το Dojo για να ολοκληρωθεί η εγγραφή σας ή πατήστε το παρακάτω κουμπί.', textAlign: TextAlign.center),
+                      Text(
+                          'Παρακαλούμε επικοινωνήστε με το Dojo για να ολοκληρωθεί η εγγραφή σας ή πατήστε το παρακάτω κουμπί.',
+                          textAlign: TextAlign.center),
                     ],
                   ),
                 ),
@@ -197,14 +212,16 @@ class _ProfilePageState extends State<ProfilePage> {
                 onPressed: _showContactDialog,
                 icon: const Icon(Icons.send_to_mobile),
                 label: const Text('Επικοινωνία με το Dojo'),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade700, foregroundColor: Colors.white),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green.shade700,
+                    foregroundColor: Colors.white),
               ),
             ],
           ),
         ),
       );
     }
-    
+
     final data = _memberData!.data() as Map<String, dynamic>;
     final String fullName = data['fullName'] ?? 'Άγνωστο Όνομα';
     final String rankType = data['rankType'] ?? 'Kyu';
@@ -225,8 +242,8 @@ class _ProfilePageState extends State<ProfilePage> {
     }
 
     final bool isDanRank = rankType.toLowerCase().contains('dan');
-    final String beltImage = isDanRank 
-        ? 'assets/images/black_belt.png' 
+    final String beltImage = isDanRank
+        ? 'assets/images/black_belt.png'
         : 'assets/images/white_belt.png';
 
     return SingleChildScrollView(
@@ -241,10 +258,11 @@ class _ProfilePageState extends State<ProfilePage> {
               margin: const EdgeInsets.only(bottom: 24),
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: const AssetImage('assets/images/techniques_background.png'),
+                  image: const AssetImage(
+                      'assets/images/techniques_background.png'),
                   fit: BoxFit.cover,
                   colorFilter: ColorFilter.mode(
-                    Colors.white.withOpacity(0.1),
+                    Colors.white.withOpacity(0.2),
                     BlendMode.dstATop,
                   ),
                 ),
@@ -261,9 +279,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         radius: 60,
                         backgroundColor: Colors.grey.shade300,
                         backgroundImage: getProfileImage(),
-                        child: getProfileImage() == null 
-                          ? const Icon(Icons.person, size: 60, color: Colors.white)
-                          : null,
+                        child: getProfileImage() == null
+                            ? const Icon(Icons.person,
+                                size: 60, color: Colors.white)
+                            : null,
                       ),
                     ),
                     Positioned(
@@ -278,9 +297,14 @@ class _ProfilePageState extends State<ProfilePage> {
                           borderRadius: BorderRadius.circular(16),
                           child: Padding(
                             padding: const EdgeInsets.all(6.0),
-                            child: _isUploading 
-                              ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                              : const Icon(Icons.edit, color: Colors.white, size: 18),
+                            child: _isUploading
+                                ? const SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                        color: Colors.white, strokeWidth: 2))
+                                : const Icon(Icons.edit,
+                                    color: Colors.white, size: 18),
                           ),
                         ),
                       ),
@@ -291,77 +315,122 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             ListTile(
               leading: const Icon(Icons.badge_outlined, size: 30),
-              title: const Text('Ονοματεπώνυμο', style: TextStyle(fontSize: 16)),
-              subtitle: Text(fullName, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
+              title:
+                  const Text('Ονοματεπώνυμο', style: TextStyle(fontSize: 16)),
+              subtitle: Text(fullName,
+                  style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black)),
             ),
             const SizedBox(height: 16),
             ListTile(
               leading: Image.asset(beltImage, width: 30),
               title: const Text('Βαθμός', style: TextStyle(fontSize: 16)),
-              subtitle: Text('$rankLevelº $rankType', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
+              subtitle: Text('$rankLevelº $rankType',
+                  style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black)),
               trailing: ElevatedButton.icon(
                 icon: const Icon(Icons.history, size: 18),
                 label: const Text('Ιστορικό'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF2f2a2a),
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
                 ),
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => RankHistoryPage(memberId: _memberData!.id),
+                    builder: (context) =>
+                        RankHistoryPage(memberId: _memberData!.id),
                   ));
                 },
               ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: TextButton.icon(
+              child: ElevatedButton.icon(
                 onPressed: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const ProgressPage()),
+                    MaterialPageRoute(
+                        builder: (context) => const ProgressPage()),
                   );
                 },
-                icon: Icon(Icons.trending_up, color: Colors.blue.shade700),
-                label: Text(
-                  'Η Πρόοδός μου',
-                  style: TextStyle(color: Colors.grey.shade800, decoration: TextDecoration.underline),
-                ),
-                style: TextButton.styleFrom(
-                  alignment: Alignment.centerLeft,
+                icon: Icon(Icons.flash_on_outlined, color: Colors.red.shade700),
+                label: const Text('Η Πρόοδός μου'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black,
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: BorderSide(color: Colors.grey.shade300),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
               ),
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
-              onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => const NafudakakePage())),
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const NafudakakePage())),
               icon: const Icon(Icons.groups_2_outlined),
               label: const Text('Nafudakake'),
-              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFd2b48c), foregroundColor: Colors.black, padding: const EdgeInsets.symmetric(vertical: 12)),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFd2b48c),
+                  foregroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(vertical: 12)),
             ),
             const SizedBox(height: 8),
             ElevatedButton.icon(
-              onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => SubscriptionsHistoryPage(memberId: _memberData!.id))),
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) =>
+                      SubscriptionsHistoryPage(memberId: _memberData!.id))),
               icon: const Icon(Icons.history),
               label: const Text('Οι Συνδρομές μου'),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade700, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 12)),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green.shade700,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12)),
             ),
             const SizedBox(height: 8),
             StreamBuilder<QuerySnapshot>(
-              stream: _memberData!.reference.collection('messages').where('isRead', isEqualTo: false).snapshots(),
+              stream: _memberData!.reference
+                  .collection('messages')
+                  .where('isRead', isEqualTo: false)
+                  .snapshots(),
               builder: (context, snapshot) {
-                final unreadCount = snapshot.hasData ? snapshot.data!.docs.length : 0;
+                final unreadCount =
+                    snapshot.hasData ? snapshot.data!.docs.length : 0;
                 return ElevatedButton.icon(
-                  onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => MemberMessagesPage(memberId: _memberData!.id))),
+                  onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) =>
+                          MemberMessagesPage(memberId: _memberData!.id))),
                   icon: Stack(
                     clipBehavior: Clip.none,
                     children: [
                       const Icon(Icons.mark_email_unread_outlined),
-                      if (unreadCount > 0) Positioned(top: -8, right: -12, child: CircleAvatar(radius: 10, backgroundColor: Colors.red, child: Text(unreadCount.toString(), style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)))),
+                      if (unreadCount > 0)
+                        Positioned(
+                            top: -8,
+                            right: -12,
+                            child: CircleAvatar(
+                                radius: 10,
+                                backgroundColor: Colors.red,
+                                child: Text(unreadCount.toString(),
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold)))),
                     ],
                   ),
                   label: const Text('Μηνύματα από το Dojo'),
-                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2f2a2a), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 12)),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF2f2a2a),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12)),
                 );
               },
             ),
@@ -370,7 +439,10 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: _showContactDialog,
               icon: const Icon(Icons.send_to_mobile),
               label: const Text('Επικοινωνία με το Dojo'),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.grey.shade800, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 12)),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey.shade800,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12)),
             ),
           ],
         ),
@@ -384,31 +456,62 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Chip(label: Text('ADMIN ACCESS', style: TextStyle(fontWeight: FontWeight.bold)), backgroundColor: Colors.amber, avatar: Icon(Icons.shield, color: Colors.black), padding: EdgeInsets.all(8)),
+          const Chip(
+              label: Text('ADMIN ACCESS',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              backgroundColor: Colors.amber,
+              avatar: Icon(Icons.shield, color: Colors.black),
+              padding: EdgeInsets.all(8)),
           const SizedBox(height: 16),
-          Text(FirebaseAuth.instance.currentUser?.email ?? 'Admin', textAlign: TextAlign.center, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(FirebaseAuth.instance.currentUser?.email ?? 'Admin',
+              textAlign: TextAlign.center,
+              style:
+                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const Spacer(),
           ElevatedButton.icon(
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const FinancialSummaryPage()));
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const FinancialSummaryPage()));
             },
             icon: const Icon(Icons.account_balance_wallet_outlined),
             label: const Text('Οικονομική Διαχείριση'),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 12)),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.teal,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 12)),
           ),
           const SizedBox(height: 8),
           StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance.collection('inbox').where('isRead', isEqualTo: false).snapshots(),
+            stream: FirebaseFirestore.instance
+                .collection('inbox')
+                .where('isRead', isEqualTo: false)
+                .snapshots(),
             builder: (context, snapshot) {
-              final unreadCount = snapshot.hasData ? snapshot.data!.docs.length : 0;
+              final unreadCount =
+                  snapshot.hasData ? snapshot.data!.docs.length : 0;
               return ElevatedButton.icon(
-                onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => const InboxPage())),
-                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2f2a2a), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 12)),
+                onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => const InboxPage())),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF2f2a2a),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12)),
                 icon: Stack(
                   clipBehavior: Clip.none,
                   children: [
                     const Icon(Icons.inbox),
-                    if (unreadCount > 0) Positioned(top: -8, right: -12, child: CircleAvatar(radius: 10, backgroundColor: Colors.red, child: Text(unreadCount.toString(), style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)))),
+                    if (unreadCount > 0)
+                      Positioned(
+                          top: -8,
+                          right: -12,
+                          child: CircleAvatar(
+                              radius: 10,
+                              backgroundColor: Colors.red,
+                              child: Text(unreadCount.toString(),
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold)))),
                   ],
                 ),
                 label: const Text('Εισερχόμενα'),
@@ -417,17 +520,25 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           const SizedBox(height: 8),
           ElevatedButton.icon(
-            onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MemberManagementPage())),
+            onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const MemberManagementPage())),
             icon: const Icon(Icons.group),
             label: const Text('Διαχείριση Μελών'),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade700, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 12)),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red.shade700,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 12)),
           ),
           const SizedBox(height: 8),
           ElevatedButton.icon(
-            onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AnnouncementsManagementPage())),
+            onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const AnnouncementsManagementPage())),
             icon: const Icon(Icons.campaign_outlined),
             label: const Text('Διαχείριση Ανακοινώσεων'),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.orange.shade800, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 12)),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange.shade800,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 12)),
           ),
         ],
       ),

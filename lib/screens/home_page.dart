@@ -165,7 +165,7 @@ class _HomePageState extends State<HomePage> {
                     },
                     borderRadius: BorderRadius.circular(12),
                     child: Card(
-                      color: darkCardBackgroundColor,
+                      color: lightCardBackgroundColor,
                       elevation: 1,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       child: Padding(
@@ -174,7 +174,7 @@ class _HomePageState extends State<HomePage> {
                           stream: FirebaseFirestore.instance.collection('announcements').orderBy('timestamp', descending: true).limit(2).snapshots(),
                           builder: (context, snapshot) {
                             if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                              return const ListTile(title: Text('Δεν υπάρχουν πρόσφατες ανακοινώσεις.', textAlign: TextAlign.center, style: TextStyle(color: Colors.white)));
+                              return const ListTile(title: Text('Δεν υπάρχουν πρόσφατες ανακοινώσεις.', textAlign: TextAlign.center, style: TextStyle(color: Colors.black)));
                             }
                             final announcements = snapshot.data!.docs;
                             return Column(
@@ -183,13 +183,13 @@ class _HomePageState extends State<HomePage> {
                                 final isFirstItem = index == 0;
                                 return Column(
                                   children: [
-                                    if (!isFirstItem) Divider(indent: 20, endIndent: 20, height: 1, color: Colors.grey.shade700),
+                                    if (!isFirstItem) Divider(indent: 20, endIndent: 20, height: 1, color: Colors.grey.shade300),
                                     ListTile(
                                       contentPadding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
                                       title: Text(
                                         announcement['title'] ?? '',
                                         textAlign: TextAlign.center,
-                                        style: const TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+                                        style: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold),
                                       ),
                                     ),
                                   ],
