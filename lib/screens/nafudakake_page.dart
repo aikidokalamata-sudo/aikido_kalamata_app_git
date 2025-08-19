@@ -13,12 +13,16 @@ Widget _buildRankHeader(String title, Color backgroundColor, Color textColor) {
       color: backgroundColor,
       borderRadius: BorderRadius.circular(8),
       boxShadow: [
-        BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 4, offset: const Offset(0, 2)),
+        BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2)),
       ],
     ),
     child: Text(
       title,
-      style: TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 18),
+      style: TextStyle(
+          color: textColor, fontWeight: FontWeight.bold, fontSize: 18),
       textAlign: TextAlign.center,
     ),
   );
@@ -34,7 +38,8 @@ Widget _buildMemberTile(String name) {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Text(
         name,
-        style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
+        style: const TextStyle(
+            color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
         textAlign: TextAlign.center,
       ),
     ),
@@ -50,45 +55,34 @@ class NafudakakePage extends StatefulWidget {
 
 class _NafudakakePageState extends State<NafudakakePage> {
   Future<Map<String, List<DocumentSnapshot>>> _fetchAndGroupMembers() async {
-    // --- Η ΑΛΛΑΓΗ ΕΙΝΑΙ ΕΔΩ: Προσθέτουμε το .where() για να φιλτράρουμε τα μέλη ---
     final querySnapshot = await FirebaseFirestore.instance
         .collection('members')
-        .where('memberType', isEqualTo: 'Ενήλικες') // Παίρνουμε ΜΟΝΟ τους ενήλικες
+        .where('memberType', isEqualTo: 'Ενήλικες')
         .get();
-    
-    final allMembers = querySnapshot.docs;
-
-    // Η υπόλοιπη λογική ταξινόμησης και ομαδοποίησης παραμένει η ίδια
-    allMembers.sort((a, b) {
-      final dataA = a.data();
-      final dataB = b.data();
-      final rankTypeA = dataA['rankType'] as String? ?? 'Kyu';
-      final rankTypeB = dataB['rankType'] as String? ?? 'Kyu';
-      final rankLevelA = dataA['rankLevel'] as int? ?? 0;
-      final rankLevelB = dataB['rankLevel'] as int? ?? 0;
-
-      if (rankTypeA == 'Dan' && rankTypeB == 'Kyu') return -1;
-      if (rankTypeA == 'Kyu' && rankTypeB == 'Dan') return 1;
-      if (rankTypeA == 'Dan') return rankLevelB.compareTo(rankLevelA);
-      return rankLevelA.compareTo(rankLevelB);
-    });
 
     final Map<String, List<DocumentSnapshot>> groupedMembers = {};
-    for (var member in allMembers) {
+    for (var member in querySnapshot.docs) {
       final data = member.data();
       final rankType = data['rankType'] as String? ?? 'Kyu';
       final rankLevel = data['rankLevel'] as int? ?? 0;
-      final key = '$rankLevel $rankType';
 
+      // --- Η ΑΛΛΑΓΗ ΕΙΝΑΙ ΕΔΩ: Προσθέτουμε φίλτρο για να αγνοούμε τα 0 Kyu ---
+      if (rankType == 'Kyu' && rankLevel == 0) {
+        continue; // Αγνοούμε αυτό το μέλος και συνεχίζουμε με το επόμενο
+      }
+      // --------------------------------------------------------------------
+
+      final key = '$rankLevel $rankType';
       groupedMembers.putIfAbsent(key, () => []).add(member);
     }
-    
+
     groupedMembers.forEach((key, value) {
-      value.sort((a, b) => (a['fullName'] as String).compareTo(b['fullName'] as String));
+      value.sort((a, b) =>
+          (a['fullName'] as String).compareTo(b['fullName'] as String));
     });
 
     final sortedKeys = groupedMembers.keys.toList();
-    sortedKeys.sort((a, b){
+    sortedKeys.sort((a, b) {
       final typeA = a.contains('Dan') ? 'Dan' : 'Kyu';
       final typeB = b.contains('Dan') ? 'Dan' : 'Kyu';
       final levelA = int.parse(a.split(' ')[0]);
@@ -103,7 +97,7 @@ class _NafudakakePageState extends State<NafudakakePage> {
     final Map<String, List<DocumentSnapshot>> sortedGroupedMembers = {
       for (var key in sortedKeys) key: groupedMembers[key]!
     };
-    
+
     return sortedGroupedMembers;
   }
 
@@ -120,7 +114,11 @@ class _NafudakakePageState extends State<NafudakakePage> {
         backgroundColor: pageBackgroundColor,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
-        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'ZonaPro', fontWeight: FontWeight.bold),
+        titleTextStyle: const TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontFamily: 'ZonaPro',
+            fontWeight: FontWeight.bold),
       ),
       body: FutureBuilder<Map<String, List<DocumentSnapshot>>>(
         future: _fetchAndGroupMembers(),
@@ -129,10 +127,14 @@ class _NafudakakePageState extends State<NafudakakePage> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return Center(child: Text('Σφάλμα: ${snapshot.error}', style: const TextStyle(color: Colors.white)));
+            return Center(
+                child: Text('Σφάλμα: ${snapshot.error}',
+                    style: const TextStyle(color: Colors.white)));
           }
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('Δεν βρέθηκαν μέλη.', style: TextStyle(color: Colors.white)));
+            return const Center(
+                child: Text('Δεν βρέθηκαν βαθμολογημένα μέλη.',
+                    style: TextStyle(color: Colors.white)));
           }
 
           final groupedMembers = snapshot.data!;
@@ -153,7 +155,8 @@ class _NafudakakePageState extends State<NafudakakePage> {
                     isDan ? danColor : kyuColor,
                     isDan ? Colors.white : Colors.black,
                   ),
-                  ...membersInRank.map((member) => _buildMemberTile(member['fullName'])),
+                  ...membersInRank
+                      .map((member) => _buildMemberTile(member['fullName'])),
                 ],
               );
             },
