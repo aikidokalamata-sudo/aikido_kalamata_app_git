@@ -563,7 +563,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   'Logout',
                   style: TextStyle(
                     color: Colors.red,
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

@@ -37,11 +37,11 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await initializeDateFormatting('el_GR', null);
-  
+
   if (kIsWeb == false && (Platform.isAndroid || Platform.isIOS)) {
     await setupPushNotifications();
   }
-  
+
   runApp(const MyApp());
 }
 
@@ -99,7 +99,8 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    _authSubscription = FirebaseAuth.instance.authStateChanges().listen((User? user) async {
+    _authSubscription =
+        FirebaseAuth.instance.authStateChanges().listen((User? user) async {
       _currentUser = user;
       if (user == null) {
         _isMemberActive = false;
@@ -121,7 +122,8 @@ class _MainScreenState extends State<MainScreen> {
       _isMemberActive = true;
       return;
     }
-    final memberRef = FirebaseFirestore.instance.collection('members').doc(user.uid);
+    final memberRef =
+        FirebaseFirestore.instance.collection('members').doc(user.uid);
     final memberDoc = await memberRef.get();
     if (memberDoc.exists) {
       _isMemberActive = true;
@@ -161,11 +163,17 @@ class _MainScreenState extends State<MainScreen> {
   void _onItemTapped(int index) {
     final bool isLoggedIn = _currentUser != null;
     if (!isLoggedIn && index == 3) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Πρέπει να συνδεθείτε για αυτή τη λειτουργία.'), backgroundColor: Colors.red, duration: Duration(seconds: 2)));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Πρέπει να συνδεθείτε για αυτή τη λειτουργία.'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 2)));
       return;
     }
     if (!_isMemberActive && index == 2) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Αυτή η λειτουργία είναι μόνο για ενεργά μέλη.'), backgroundColor: Colors.red, duration: Duration(seconds: 2)));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Αυτή η λειτουργία είναι μόνο για ενεργά μέλη.'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 2)));
       return;
     }
     setState(() {
@@ -201,8 +209,10 @@ class _MainScreenState extends State<MainScreen> {
           backgroundColor: Colors.white,
           elevation: 5,
           items: <BottomNavigationBarItem>[
-            const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Αρχική'),
-            const BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: 'Πρόγραμμα'),
+            const BottomNavigationBarItem(
+                icon: Icon(Icons.home), label: 'Αρχική'),
+            const BottomNavigationBarItem(
+                icon: Icon(Icons.calendar_today), label: 'Πρόγραμμα'),
             BottomNavigationBarItem(
               icon: Stack(
                 clipBehavior: Clip.none,
@@ -210,12 +220,17 @@ class _MainScreenState extends State<MainScreen> {
                   const Icon(Icons.book),
                   if (showLockForTechniques)
                     Positioned(
-                      top: -2, right: -4,
+                      top: -2,
+                      right: -4,
                       child: Container(
                         padding: const EdgeInsets.all(1),
-                        decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(6)),
-                        constraints: const BoxConstraints(minWidth: 12, minHeight: 12),
-                        child: const Icon(Icons.lock, size: 8, color: Colors.white),
+                        decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(6)),
+                        constraints:
+                            const BoxConstraints(minWidth: 12, minHeight: 12),
+                        child: const Icon(Icons.lock,
+                            size: 8, color: Colors.white),
                       ),
                     )
                 ],
@@ -229,19 +244,25 @@ class _MainScreenState extends State<MainScreen> {
                   const Icon(Icons.person),
                   if (showLockForProfile)
                     Positioned(
-                      top: -2, right: -4,
+                      top: -2,
+                      right: -4,
                       child: Container(
                         padding: const EdgeInsets.all(1),
-                        decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(6)),
-                        constraints: const BoxConstraints(minWidth: 12, minHeight: 12),
-                        child: const Icon(Icons.lock, size: 8, color: Colors.white),
+                        decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(6)),
+                        constraints:
+                            const BoxConstraints(minWidth: 12, minHeight: 12),
+                        child: const Icon(Icons.lock,
+                            size: 8, color: Colors.white),
                       ),
                     )
                 ],
               ),
               label: 'Προφίλ',
             ),
-            const BottomNavigationBarItem(icon: Icon(Icons.info), label: 'Dojo'),
+            const BottomNavigationBarItem(
+                icon: Icon(Icons.info), label: 'Dojo'),
           ],
           currentIndex: _selectedIndex,
           selectedItemColor: Colors.red,

@@ -14,15 +14,30 @@ class FinancialSummaryPage extends StatefulWidget {
 class _FinancialSummaryPageState extends State<FinancialSummaryPage> {
   DateTime _selectedDate = DateTime.now();
 
-  // --- ΟΛΟΚΛΗΡΩΜΕΝΗ ΣΥΝΑΡΤΗΣΗ ΓΙΑ ΤΟ DIALOG ---
+  void _goToPreviousMonth() {
+    setState(() {
+      _selectedDate = DateTime(_selectedDate.year, _selectedDate.month - 1, 1);
+    });
+  }
+
+  void _goToNextMonth() {
+    setState(() {
+      _selectedDate = DateTime(_selectedDate.year, _selectedDate.month + 1, 1);
+    });
+  }
+
   void _showTransactionDialog({DocumentSnapshot? existingTransaction}) {
     final bool isEditing = existingTransaction != null;
-    final data = isEditing ? existingTransaction.data() as Map<String, dynamic> : null;
+    final data =
+        isEditing ? existingTransaction.data() as Map<String, dynamic> : null;
 
-    final descriptionController = TextEditingController(text: data?['description'] ?? '');
-    final amountController = TextEditingController(text: (data?['amount'] as num?)?.abs().toString() ?? '');
+    final descriptionController =
+        TextEditingController(text: data?['description'] ?? '');
+    final amountController = TextEditingController(
+        text: (data?['amount'] as num?)?.abs().toString() ?? '');
     bool isIncome = data?['amount'] == null || (data?['amount'] as num) > 0;
-    DateTime transactionDate = (data?['date'] as Timestamp?)?.toDate() ?? DateTime.now();
+    DateTime transactionDate =
+        (data?['date'] as Timestamp?)?.toDate() ?? DateTime.now();
 
     showDialog(
       context: context,
@@ -42,7 +57,8 @@ class _FinancialSummaryPageState extends State<FinancialSummaryPage> {
                     const SizedBox(height: 16),
                     TextField(
                       controller: amountController,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
                       decoration: const InputDecoration(labelText: 'Ποσό (€)'),
                     ),
                     const SizedBox(height: 16),
@@ -76,16 +92,20 @@ class _FinancialSummaryPageState extends State<FinancialSummaryPage> {
                 ),
                 TextButton(
                   onPressed: () {
-                    final double? amount = double.tryParse(amountController.text.trim());
-                    if (amount != null && descriptionController.text.isNotEmpty) {
+                    final double? amount =
+                        double.tryParse(amountController.text.trim());
+                    if (amount != null &&
+                        descriptionController.text.isNotEmpty) {
                       final finalAmount = isIncome ? amount : -amount;
-                      
-                      FirebaseFirestore.instance.collection('transactions').add({
+
+                      FirebaseFirestore.instance
+                          .collection('transactions')
+                          .add({
                         'amount': finalAmount,
                         'description': descriptionController.text.trim(),
                         'date': Timestamp.fromDate(transactionDate),
                       });
-                      
+
                       Navigator.of(dialogContext).pop();
                     }
                   },
@@ -98,17 +118,28 @@ class _FinancialSummaryPageState extends State<FinancialSummaryPage> {
       },
     );
   }
-  // --------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
     final startOfMonth = DateTime(_selectedDate.year, _selectedDate.month, 1);
-    final endOfMonth = DateTime(_selectedDate.year, _selectedDate.month + 1, 0, 23, 59, 59);
+    final endOfMonth =
+        DateTime(_selectedDate.year, _selectedDate.month + 1, 0, 23, 59, 59);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Σύνοψη ${DateFormat.yMMMM('el_GR').format(_selectedDate)}'),
+        // --- Η ΑΛΛΑΓΗ ΕΙΝΑΙ ΕΔΩ ---
+        title: Text(DateFormat.yMMMM('el_GR').format(_selectedDate)),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.chevron_left),
+            onPressed: _goToPreviousMonth,
+            tooltip: 'Προηγούμενος Μήνας',
+          ),
+          IconButton(
+            icon: const Icon(Icons.chevron_right),
+            onPressed: _goToNextMonth,
+            tooltip: 'Επόμενος Μήνας',
+          ),
           IconButton(
             icon: const Icon(Icons.calendar_today),
             onPressed: () async {
@@ -125,6 +156,7 @@ class _FinancialSummaryPageState extends State<FinancialSummaryPage> {
                 });
               }
             },
+            tooltip: 'Επιλογή Ημερομηνίας',
           )
         ],
       ),
@@ -180,7 +212,8 @@ class _FinancialSummaryPageState extends State<FinancialSummaryPage> {
                   children: [
                     _buildSummaryCard('Έσοδα', totalIncome, Colors.green),
                     _buildSummaryCard('Έξοδα', totalExpenses, Colors.red),
-                    _buildSummaryCard('Ισοζύγιο', netBalance, netBalance >= 0 ? Colors.blue : Colors.orange),
+                    _buildSummaryCard('Ισοζύγιο', netBalance,
+                        netBalance >= 0 ? Colors.blue : Colors.orange),
                   ],
                 ),
               ),
@@ -225,11 +258,13 @@ class _FinancialSummaryPageState extends State<FinancialSummaryPage> {
           padding: const EdgeInsets.all(12.0),
           child: Column(
             children: [
-              Text(title, style: const TextStyle(fontSize: 14, color: Colors.black54)),
+              Text(title,
+                  style: const TextStyle(fontSize: 14, color: Colors.black54)),
               const SizedBox(height: 4),
               Text(
                 '${amount.toStringAsFixed(2)} €',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color),
+                style: TextStyle(
+                    fontSize: 18, fontWeight: FontWeight.bold, color: color),
               ),
             ],
           ),
@@ -238,9 +273,11 @@ class _FinancialSummaryPageState extends State<FinancialSummaryPage> {
     );
   }
 
-  Widget _buildTransactionList(List<DocumentSnapshot> transactions, bool isIncome) {
+  Widget _buildTransactionList(
+      List<DocumentSnapshot> transactions, bool isIncome) {
     if (transactions.isEmpty) {
-      return Center(child: Text('Δεν υπάρχουν ${isIncome ? "έσοδα" : "έξοδα"}.'));
+      return Center(
+          child: Text('Δεν υπάρχουν ${isIncome ? "έσοδα" : "έξοδα"}.'));
     }
     return ListView.builder(
       itemCount: transactions.length,
@@ -252,27 +289,34 @@ class _FinancialSummaryPageState extends State<FinancialSummaryPage> {
         final date = (data['date'] as Timestamp).toDate();
 
         return ListTile(
-          leading: Icon(isIncome ? Icons.arrow_downward : Icons.arrow_upward, color: isIncome ? Colors.green : Colors.red),
+          leading: Icon(isIncome ? Icons.arrow_downward : Icons.arrow_upward,
+              color: isIncome ? Colors.green : Colors.red),
           title: Text(description),
           subtitle: Text(DateFormat('dd/MM/yyyy').format(date)),
           trailing: Text(
             '${amount.abs().toStringAsFixed(2)} €',
-            style: TextStyle(fontWeight: FontWeight.bold, color: isIncome ? Colors.green : Colors.red),
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: isIncome ? Colors.green : Colors.red),
           ),
           onLongPress: () {
             showDialog(
               context: context,
               builder: (dialogContext) => AlertDialog(
                 title: const Text('Διαγραφή Κίνησης'),
-                content: const Text('Είστε σίγουρος ότι θέλετε να διαγράψετε αυτή την κίνηση;'),
+                content: const Text(
+                    'Είστε σίγουρος ότι θέλετε να διαγράψετε αυτή την κίνηση;'),
                 actions: [
-                  TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('Άκυρο')),
+                  TextButton(
+                      onPressed: () => Navigator.of(dialogContext).pop(),
+                      child: const Text('Άκυρο')),
                   TextButton(
                     onPressed: () {
                       doc.reference.delete();
                       Navigator.of(dialogContext).pop();
                     },
-                    child: const Text('Διαγραφή', style: TextStyle(color: Colors.red)),
+                    child: const Text('Διαγραφή',
+                        style: TextStyle(color: Colors.red)),
                   ),
                 ],
               ),
