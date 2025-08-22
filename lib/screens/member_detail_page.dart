@@ -228,14 +228,16 @@ class MemberDetailPage extends StatelessWidget {
                     .limit(5)
                     .snapshots(),
                 builder: (context, snapshot) {
-                  if (!snapshot.hasData)
+                  if (!snapshot.hasData) {
                     return const Center(child: CircularProgressIndicator());
-                  if (snapshot.data!.docs.isEmpty)
+                  }
+                  if (snapshot.data!.docs.isEmpty) {
                     return const Center(
                         child: Padding(
                             padding: EdgeInsets.all(16.0),
                             child:
                                 Text('Δεν υπάρχουν καταχωρημένες συνδρομές.')));
+                  }
 
                   return ListView.builder(
                     shrinkWrap: true,

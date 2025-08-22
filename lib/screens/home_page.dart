@@ -204,33 +204,36 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 32),
                   const Text('ΧΡΗΣΙΜΑ', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87)),
                   const SizedBox(height: 8),
+
+                  // --- Ο ΝΕΟΣ, ΒΕΛΤΙΩΜΕΝΟΣ ΚΩΔΙΚΑΣ ΕΙΝΑΙ ΕΔΩ ---
                   Card(
+                    elevation: 1,
                     color: lightCardBackgroundColor,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    child: ListTile(
-                      leading: const Icon(Icons.translate, color: Colors.black54, size: 30),
-                      title: const Text('Λεξικό Ορολογίας Aikido', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                      subtitle: const Text('Βρείτε τους όρους που χρησιμοποιούμε στο Dojo.', style: TextStyle(color: Colors.black87)),
-                      trailing: const Icon(Icons.arrow_forward, color: Colors.black54),
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AikidoTermsPage()));
-                      },
+                    child: Column(
+                      children: [
+                        ListTile(
+                          leading: Icon(Icons.translate, color: Colors.red.shade700, size: 30),
+                          title: const Text('Λεξικό Ορολογίας Aikido', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                          trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AikidoTermsPage()));
+                          },
+                        ),
+                        const Divider(height: 1, indent: 16, endIndent: 16),
+                        ListTile(
+                          leading: Icon(Icons.rule_folder_outlined, color: Colors.red.shade700, size: 30),
+                          title: const Text('Κανόνες Dojo / Etiquette', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                          trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const EtiquettePage()));
+                          },
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Card(
-                    color: lightCardBackgroundColor,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    child: ListTile(
-                      leading: const Icon(Icons.rule_folder_outlined, color: Colors.black54, size: 30),
-                      title: const Text('Κανόνες Dojo / Etiquette', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                      subtitle: const Text('Διαβάστε τον κώδικα συμπεριφοράς του Dojo.', style: TextStyle(color: Colors.black87)),
-                      trailing: const Icon(Icons.arrow_forward, color: Colors.black54),
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const EtiquettePage()));
-                      },
-                    ),
-                  ),
+                  // ------------------------------------------------
+                  
                 ],
               ),
             ),
