@@ -356,9 +356,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     label: const Text('Ιστορικό',
                         style: TextStyle(fontWeight: FontWeight.w700)),
                     style: flatButtonStyle.copyWith(
-                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                      shape: WidgetStateProperty.all(RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20))),
-                      padding: MaterialStateProperty.all(
+                      padding: WidgetStateProperty.all(
                         const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 10),
                       ),
@@ -479,7 +479,7 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           OutlinedButton.icon(
             onPressed: null,
-            icon: Icon(Icons.shield, color: Colors.white),
+            icon: const Icon(Icons.shield, color: Colors.white),
             label: const Text('ADMIN ACCESS',
                 style: TextStyle(color: Colors.white)),
             style: OutlinedButton.styleFrom(
@@ -488,7 +488,7 @@ class _ProfilePageState extends State<ProfilePage> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              side: BorderSide(color: Colors.black, width: 1),
+              side: const BorderSide(color: Colors.black, width: 1),
               padding: const EdgeInsets.symmetric(vertical: 14),
               elevation: 0,
             ),

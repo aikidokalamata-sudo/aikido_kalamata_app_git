@@ -170,7 +170,7 @@ class _RankHistoryPageState extends State<RankHistoryPage> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              padding: EdgeInsets.symmetric(vertical: 8.0),
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
             ),
           ),
         )

@@ -230,57 +230,79 @@ class _HomePageState extends State<HomePage> {
                       ),
                       padding: EdgeInsets.zero,
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                        stream: FirebaseFirestore.instance
-                            .collection('announcements')
-                            .orderBy('timestamp', descending: true)
-                            .limit(2)
-                            .snapshots(),
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData ||
-                              snapshot.data!.docs.isEmpty) {
-                            return const ListTile(
-                              title: Text(
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Image.asset(
+                            'assets/images/announcements.png',
+                            height: 30,
+                            width: 30,
+                          ),
+                        ),
+                        Expanded(
+                          child: StreamBuilder<
+                              QuerySnapshot<Map<String, dynamic>>>(
+                            stream: FirebaseFirestore.instance
+                                .collection('announcements')
+                                .orderBy('timestamp', descending: true)
+                                .limit(2)
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData ||
+                                  snapshot.data!.docs.isEmpty) {
+                                return const Text(
                                   'Δεν υπάρχουν πρόσφατες ανακοινώσεις.',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(color: Colors.black)),
-                            );
-                          }
-                          final announcements = snapshot.data!.docs;
-                          return Column(
-                            children:
-                                List.generate(announcements.length, (index) {
-                              final announcement = announcements[index].data();
-                              final isFirstItem = index == 0;
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.left,
+                                );
+                              }
+                              final announcements = snapshot.data!.docs;
                               return Column(
-                                children: [
-                                  if (!isFirstItem)
-                                    Divider(
-                                      indent: 20,
-                                      endIndent: 20,
-                                      height: 1,
-                                      color: Colors.grey.shade300,
-                                    ),
-                                  ListTile(
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 4, horizontal: 16),
-                                    title: Text(
-                                      announcement['title'] ?? '',
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ],
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: List.generate(announcements.length,
+                                    (index) {
+                                  final announcement =
+                                      announcements[index].data();
+                                  final isFirstItem = index == 0;
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      if (!isFirstItem)
+                                        Divider(
+                                          indent: 0,
+                                          endIndent: 0,
+                                          height: 1,
+                                          color: Colors.grey.shade300,
+                                        ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 4, horizontal: 0),
+                                        child: Text(
+                                          announcement['title'] ?? '',
+                                          style: const TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }),
                               );
-                            }),
-                          );
-                        },
-                      ),
+                            },
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(right: 12.0),
+                          child: Icon(Icons.arrow_forward_ios,
+                              size: 16, color: Colors.grey),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 32),
