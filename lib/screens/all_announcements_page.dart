@@ -32,9 +32,13 @@ class AllAnnouncementsPage extends StatelessWidget {
 
           final announcements = snapshot.data!.docs;
 
-          return ListView.builder(
+          return ListView.separated(
             padding: const EdgeInsets.all(8.0),
             itemCount: announcements.length,
+            separatorBuilder: (context, index) => Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Divider(height: 1, color: Colors.grey.shade300),
+            ),
             itemBuilder: (context, index) {
               final announcementDoc = announcements[index];
               final data = announcementDoc.data() as Map<String, dynamic>;
@@ -42,18 +46,30 @@ class AllAnnouncementsPage extends StatelessWidget {
               final title = data['title'] ?? 'Χωρίς τίτλο';
               final subtitle = data['subtitle'] ?? '';
               final timestamp = data['timestamp'] as Timestamp?;
-              
+
               String formattedDate = '';
               if (timestamp != null) {
-                formattedDate = DateFormat('dd/MM/yyyy').format(timestamp.toDate());
+                formattedDate =
+                    DateFormat('dd/MM/yyyy').format(timestamp.toDate());
               }
 
-              return Card(
-                elevation: 2,
-                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                child: ListTile(
-                  title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Text('$subtitle\n$formattedDate'), // Εμφανίζουμε και τον υπότιτλο και την ημερομηνία
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    side: BorderSide.none,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: EdgeInsets.zero,
+                  ),
+                  onPressed: null,
+                  child: ListTile(
+                    title: Text(title,
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: Text('$subtitle\n$formattedDate'),
+                  ),
                 ),
               );
             },

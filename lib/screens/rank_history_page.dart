@@ -12,7 +12,7 @@ class RankHistoryPage extends StatefulWidget {
   final bool isAdmin;
 
   const RankHistoryPage({
-    super.key, 
+    super.key,
     required this.memberId,
     this.isAdmin = false,
   });
@@ -22,7 +22,6 @@ class RankHistoryPage extends StatefulWidget {
 }
 
 class _RankHistoryPageState extends State<RankHistoryPage> {
-
   void _showAddRankDialog() {
     final rankController = TextEditingController();
     final examinerController = TextEditingController();
@@ -42,7 +41,8 @@ class _RankHistoryPageState extends State<RankHistoryPage> {
                     TextField(
                       controller: rankController,
                       autofocus: true,
-                      decoration: const InputDecoration(labelText: 'Βαθμός (π.χ. 4ο Kyu)'),
+                      decoration: const InputDecoration(
+                          labelText: 'Βαθμός (π.χ. 4ο Kyu)'),
                     ),
                     const SizedBox(height: 16),
                     TextField(
@@ -54,7 +54,8 @@ class _RankHistoryPageState extends State<RankHistoryPage> {
                       contentPadding: EdgeInsets.zero,
                       leading: const Icon(Icons.calendar_today),
                       title: const Text('Ημερομηνία Απονομής'),
-                      subtitle: Text(DateFormat('dd/MM/yyyy').format(selectedDate)),
+                      subtitle:
+                          Text(DateFormat('dd/MM/yyyy').format(selectedDate)),
                       onTap: () async {
                         final DateTime? picked = await showDatePicker(
                           context: context,
@@ -83,7 +84,8 @@ class _RankHistoryPageState extends State<RankHistoryPage> {
                     if (rankName.isNotEmpty) {
                       FirebaseFirestore.instance
                           .collection('members')
-                          .doc(widget.memberId) // Χρησιμοποιούμε widget.memberId
+                          .doc(
+                              widget.memberId) // Χρησιμοποιούμε widget.memberId
                           .collection('rank_history')
                           .add({
                         'rankName': rankName,
@@ -110,7 +112,8 @@ class _RankHistoryPageState extends State<RankHistoryPage> {
         return AlertDialog(
           title: const Text('Επιβεβαίωση Διαγραφής'),
           content: const SingleChildScrollView(
-            child: Text('Είστε σίγουρος ότι θέλετε να διαγράψετε αυτόν τον βαθμό;'),
+            child: Text(
+                'Είστε σίγουρος ότι θέλετε να διαγράψετε αυτόν τον βαθμό;'),
           ),
           actions: <Widget>[
             TextButton(
@@ -118,7 +121,8 @@ class _RankHistoryPageState extends State<RankHistoryPage> {
               onPressed: () => Navigator.of(dialogContext).pop(),
             ),
             TextButton(
-              child: const Text('Διαγραφή', style: TextStyle(color: Colors.red)),
+              child:
+                  const Text('Διαγραφή', style: TextStyle(color: Colors.red)),
               onPressed: () {
                 rankRef.delete();
                 Navigator.of(dialogContext).pop();
@@ -146,16 +150,27 @@ class _RankHistoryPageState extends State<RankHistoryPage> {
       persistentFooterButtons: [
         SizedBox(
           width: double.infinity,
-          child: TextButton.icon(
+          child: OutlinedButton.icon(
             onPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const FailureLetterPage()),
+                MaterialPageRoute(
+                    builder: (context) => const FailureLetterPage()),
               );
             },
             icon: Icon(Icons.lightbulb_outline, color: Colors.red.shade700),
             label: Text(
               'Επιστολή για την αντιμετώπιση της αποτυχίας',
-              style: TextStyle(color: Colors.grey.shade800, decoration: TextDecoration.underline),
+              style: TextStyle(
+                  color: Colors.grey.shade800,
+                  decoration: TextDecoration.underline),
+            ),
+            style: OutlinedButton.styleFrom(
+              backgroundColor: Colors.white,
+              side: BorderSide.none,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: EdgeInsets.symmetric(vertical: 8.0),
             ),
           ),
         )
@@ -178,7 +193,8 @@ class _RankHistoryPageState extends State<RankHistoryPage> {
             return const Center(
               child: Padding(
                 padding: EdgeInsets.all(16.0),
-                child: Text('Δεν έχουν καταχωρηθεί βαθμοί ακόμα.', textAlign: TextAlign.center),
+                child: Text('Δεν έχουν καταχωρηθεί βαθμοί ακόμα.',
+                    textAlign: TextAlign.center),
               ),
             );
           }
@@ -191,40 +207,29 @@ class _RankHistoryPageState extends State<RankHistoryPage> {
             itemBuilder: (context, index) {
               final rankDoc = ranks[index];
               final rankData = rankDoc.data() as Map<String, dynamic>;
-              
+
               final String rankName = rankData['rankName'] ?? 'Άγνωστος Βαθμός';
-              final Timestamp awardedTimestamp = rankData['examDate'] as Timestamp;
-              final String awardedDate = DateFormat('dd MMMM yyyy', 'el_GR').format(awardedTimestamp.toDate());
+              final Timestamp awardedTimestamp =
+                  rankData['examDate'] as Timestamp;
+              final String awardedDate = DateFormat('dd MMMM yyyy', 'el_GR')
+                  .format(awardedTimestamp.toDate());
 
               final bool isDanRank = rankName.toLowerCase().contains('dan');
-              final String beltImage = isDanRank 
-                  ? 'assets/images/black_belt.png' 
+              final String beltImage = isDanRank
+                  ? 'assets/images/black_belt.png'
                   : 'assets/images/white_belt.png';
 
-              return Card(
-                color: const Color(0xFFf7f2fa),
-                elevation: 1,
-                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                child: ListTile(
-                  leading: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Image.asset(beltImage, width: 40),
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: const Color(0xFFf7f2fa),
+                    side: BorderSide.none,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    padding: EdgeInsets.zero,
                   ),
-                  title: Text(rankName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  subtitle: Text('Απονομή στις $awardedDate'),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-                      if (widget.isAdmin)
-                        IconButton(
-                          icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
-                          onPressed: () => _deleteRank(rankDoc.reference),
-                        ),
-                    ],
-                  ),
-                  onTap: () {
+                  onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => EvaluationDetailPage(
                         rankDocRef: rankDoc.reference,
@@ -232,6 +237,29 @@ class _RankHistoryPageState extends State<RankHistoryPage> {
                       ),
                     ));
                   },
+                  child: ListTile(
+                    leading: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Image.asset(beltImage, width: 40),
+                    ),
+                    title: Text(rankName,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16)),
+                    subtitle: Text('Απονομή στις $awardedDate'),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.arrow_forward_ios,
+                            size: 16, color: Colors.grey),
+                        if (widget.isAdmin)
+                          IconButton(
+                            icon: const Icon(Icons.delete_outline,
+                                color: Colors.red, size: 20),
+                            onPressed: () => _deleteRank(rankDoc.reference),
+                          ),
+                      ],
+                    ),
+                  ),
                 ),
               );
             },

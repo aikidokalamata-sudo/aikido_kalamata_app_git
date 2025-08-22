@@ -19,10 +19,14 @@ class _MemberManagementPageState extends State<MemberManagementPage> {
     final docId = existingMember?.id;
     final existingData = existingMember?.data() as Map<String, dynamic>?;
 
-    final nameController = TextEditingController(text: existingData?['fullName'] ?? '');
-    final rankLevelController = TextEditingController(text: (existingData?['rankLevel'] ?? 0).toString());
-    final phoneController = TextEditingController(text: existingData?['phone'] ?? '');
-    final emailController = TextEditingController(text: existingData?['email'] ?? '');
+    final nameController =
+        TextEditingController(text: existingData?['fullName'] ?? '');
+    final rankLevelController = TextEditingController(
+        text: (existingData?['rankLevel'] ?? 0).toString());
+    final phoneController =
+        TextEditingController(text: existingData?['phone'] ?? '');
+    final emailController =
+        TextEditingController(text: existingData?['email'] ?? '');
     String selectedRankType = existingData?['rankType'] ?? 'Kyu';
     String selectedMemberType = existingData?['memberType'] ?? 'Ενήλικες';
 
@@ -32,18 +36,25 @@ class _MemberManagementPageState extends State<MemberManagementPage> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              title: Text(isEditing ? 'Επεξεργασία Μέλους' : 'Προσθήκη Νέου Μέλους'),
+              title: Text(
+                  isEditing ? 'Επεξεργασία Μέλους' : 'Προσθήκη Νέου Μέλους'),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    TextField(controller: nameController, decoration: const InputDecoration(labelText: "Ονοματεπώνυμο"), autofocus: true),
+                    TextField(
+                        controller: nameController,
+                        decoration:
+                            const InputDecoration(labelText: "Ονοματεπώνυμο"),
+                        autofocus: true),
                     const SizedBox(height: 8),
                     DropdownButtonFormField<String>(
                       value: selectedMemberType,
-                      decoration: const InputDecoration(labelText: 'Κατηγορία Μέλους'),
+                      decoration:
+                          const InputDecoration(labelText: 'Κατηγορία Μέλους'),
                       items: ['Ενήλικες', 'Παιδικό'].map((String category) {
-                        return DropdownMenuItem<String>(value: category, child: Text(category));
+                        return DropdownMenuItem<String>(
+                            value: category, child: Text(category));
                       }).toList(),
                       onChanged: (String? newValue) {
                         setDialogState(() => selectedMemberType = newValue!);
@@ -52,25 +63,52 @@ class _MemberManagementPageState extends State<MemberManagementPage> {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        Expanded(flex: 2, child: DropdownButton<String>(value: selectedRankType, isExpanded: true, onChanged: (String? newValue) => setDialogState(() => selectedRankType = newValue!), items: <String>['Kyu', 'Dan'].map((String value) => DropdownMenuItem<String>(value: value, child: Text(value))).toList())),
+                        Expanded(
+                            flex: 2,
+                            child: DropdownButton<String>(
+                                value: selectedRankType,
+                                isExpanded: true,
+                                onChanged: (String? newValue) => setDialogState(
+                                    () => selectedRankType = newValue!),
+                                items: <String>['Kyu', 'Dan']
+                                    .map((String value) =>
+                                        DropdownMenuItem<String>(
+                                            value: value, child: Text(value)))
+                                    .toList())),
                         const SizedBox(width: 8),
-                        Expanded(flex: 1, child: TextField(controller: rankLevelController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: "Επίπεδο"))),
+                        Expanded(
+                            flex: 1,
+                            child: TextField(
+                                controller: rankLevelController,
+                                keyboardType: TextInputType.number,
+                                decoration: const InputDecoration(
+                                    labelText: "Επίπεδο"))),
                       ],
                     ),
                     const SizedBox(height: 8),
-                    TextField(controller: phoneController, keyboardType: TextInputType.phone, decoration: const InputDecoration(labelText: "Τηλέφωνο")),
+                    TextField(
+                        controller: phoneController,
+                        keyboardType: TextInputType.phone,
+                        decoration:
+                            const InputDecoration(labelText: "Τηλέφωνο")),
                     const SizedBox(height: 8),
-                    TextField(controller: emailController, keyboardType: TextInputType.emailAddress, decoration: const InputDecoration(labelText: "Email")),
+                    TextField(
+                        controller: emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: const InputDecoration(labelText: "Email")),
                   ],
                 ),
               ),
               actions: <Widget>[
-                TextButton(child: const Text('Άκυρο'), onPressed: () => Navigator.of(dialogContext).pop()),
+                TextButton(
+                    child: const Text('Άκυρο'),
+                    onPressed: () => Navigator.of(dialogContext).pop()),
                 TextButton(
                   child: Text(isEditing ? 'Αποθήκευση' : 'Προσθήκη'),
                   onPressed: () {
-                    final emailToSave = emailController.text.trim().toLowerCase();
-                    
+                    final emailToSave =
+                        emailController.text.trim().toLowerCase();
+
                     final dataToSave = {
                       'fullName': nameController.text.trim(),
                       'rankType': selectedRankType,
@@ -82,7 +120,10 @@ class _MemberManagementPageState extends State<MemberManagementPage> {
                     };
 
                     if (isEditing) {
-                      _firestore.collection('members').doc(docId).update(dataToSave);
+                      _firestore
+                          .collection('members')
+                          .doc(docId)
+                          .update(dataToSave);
                     } else {
                       _firestore.collection('members').add(dataToSave);
                     }
@@ -96,15 +137,18 @@ class _MemberManagementPageState extends State<MemberManagementPage> {
       },
     );
   }
-  
+
   Future<void> _deleteMember(String docId, String memberName) async {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Επιβεβαίωση Διαγραφής'),
-        content: Text('Είστε σίγουρος ότι θέλετε να διαγράψετε οριστικά το μέλος "$memberName";'),
+        content: Text(
+            'Είστε σίγουρος ότι θέλετε να διαγράψετε οριστικά το μέλος "$memberName";'),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Άκυρο')),
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Άκυρο')),
           TextButton(
             onPressed: () {
               _firestore.collection('members').doc(docId).delete();
@@ -141,13 +185,17 @@ class _MemberManagementPageState extends State<MemberManagementPage> {
           children: [
             _MemberList(
               memberType: 'Ενήλικες',
-              onEdit: (memberDoc) => _showMemberDialog(existingMember: memberDoc),
-              onDelete: (memberDoc) => _deleteMember(memberDoc.id, memberDoc['fullName']),
+              onEdit: (memberDoc) =>
+                  _showMemberDialog(existingMember: memberDoc),
+              onDelete: (memberDoc) =>
+                  _deleteMember(memberDoc.id, memberDoc['fullName']),
             ),
             _MemberList(
               memberType: 'Παιδικό',
-              onEdit: (memberDoc) => _showMemberDialog(existingMember: memberDoc),
-              onDelete: (memberDoc) => _deleteMember(memberDoc.id, memberDoc['fullName']),
+              onEdit: (memberDoc) =>
+                  _showMemberDialog(existingMember: memberDoc),
+              onDelete: (memberDoc) =>
+                  _deleteMember(memberDoc.id, memberDoc['fullName']),
             ),
           ],
         ),
@@ -185,9 +233,12 @@ class _MemberList extends StatelessWidget {
           return const Center(child: Text('Παρουσιάστηκε σφάλμα.'));
         }
         if (snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text('Δεν υπάρχουν μέλη σε αυτή την κατηγορία.\nΠατήστε "+" για προσθήκη.', textAlign: TextAlign.center));
+          return const Center(
+              child: Text(
+                  'Δεν υπάρχουν μέλη σε αυτή την κατηγορία.\nΠατήστε "+" για προσθήκη.',
+                  textAlign: TextAlign.center));
         }
-        
+
         final members = snapshot.data!.docs;
 
         // --- Η ΛΟΓΙΚΗ ΤΗΣ ΑΥΤΟΜΑΤΗΣ ΤΑΞΙΝΟΜΗΣΗΣ ΕΙΝΑΙ ΕΔΩ ---
@@ -217,43 +268,60 @@ class _MemberList extends StatelessWidget {
           if (rankTypeA == 'Kyu') {
             return rankLevelA.compareTo(rankLevelB);
           }
-          
+
           return 0; // Αν είναι ίδιοι
         });
         // --- ΤΕΛΟΣ ΛΟΓΙΚΗΣ ΤΑΞΙΝΟΜΗΣΗΣ ---
 
-        return ListView.builder(
+        return ListView.separated(
           padding: const EdgeInsets.only(bottom: 80),
           itemCount: members.length,
+          separatorBuilder: (context, index) => Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Divider(height: 1, color: Colors.grey.shade300),
+          ),
           itemBuilder: (context, index) {
             final memberDoc = members[index];
             final memberData = memberDoc.data() as Map<String, dynamic>;
             final memberFullName = memberData['fullName'] ?? 'Άγνωστο Όνομα';
 
-            return Card(
-              margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              child: ListTile(
-                leading: const Icon(Icons.person_outline),
-                title: Text(memberFullName),
-                onTap: () {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  side: BorderSide.none,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: EdgeInsets.zero,
+                ),
+                onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => MemberDetailPage(memberDoc: memberDoc),
+                    builder: (context) =>
+                        MemberDetailPage(memberDoc: memberDoc),
                   ));
                 },
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.edit_note, color: Colors.grey.shade700),
-                      tooltip: 'Επεξεργασία',
-                      onPressed: () => onEdit(memberDoc),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.delete_outline, color: Colors.red),
-                      tooltip: 'Διαγραφή',
-                      onPressed: () => onDelete(memberDoc),
-                    ),
-                  ],
+                child: ListTile(
+                  leading: const Icon(Icons.person_outline),
+                  title: Text(memberFullName),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon:
+                            Icon(Icons.edit_note, color: Colors.grey.shade700),
+                        tooltip: 'Επεξεργασία',
+                        onPressed: () => onEdit(memberDoc),
+                      ),
+                      IconButton(
+                        icon:
+                            const Icon(Icons.delete_outline, color: Colors.red),
+                        tooltip: 'Διαγραφή',
+                        onPressed: () => onDelete(memberDoc),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );

@@ -17,16 +17,22 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   Stream<DocumentSnapshot?> getNextLessonStream() {
     final now = DateTime.now();
     final int currentDay = now.weekday;
     final String currentTime = DateFormat('HH:mm').format(now);
 
-    return FirebaseFirestore.instance.collection('schedule').snapshots().map((snapshot) {
+    return FirebaseFirestore.instance
+        .collection('schedule')
+        .snapshots()
+        .map((snapshot) {
       var potentialLessonsToday = snapshot.docs
-          .where((doc) => doc['day'] == currentDay && (doc['startTime'] as String).compareTo(currentTime) >= 0)
-          .toList()..sort((a, b) => (a['startTime'] as String).compareTo(b['startTime'] as String));
+          .where((doc) =>
+              doc['day'] == currentDay &&
+              (doc['startTime'] as String).compareTo(currentTime) >= 0)
+          .toList()
+        ..sort((a, b) =>
+            (a['startTime'] as String).compareTo(b['startTime'] as String));
 
       if (potentialLessonsToday.isNotEmpty) {
         return potentialLessonsToday.first;
@@ -36,7 +42,9 @@ class _HomePageState extends State<HomePage> {
         int nextDay = (currentDay + i - 1) % 7 + 1;
         var potentialLessonsNextDays = snapshot.docs
             .where((doc) => doc['day'] == nextDay)
-            .toList()..sort((a, b) => (a['startTime'] as String).compareTo(b['startTime'] as String));
+            .toList()
+          ..sort((a, b) =>
+              (a['startTime'] as String).compareTo(b['startTime'] as String));
 
         if (potentialLessonsNextDays.isNotEmpty) {
           return potentialLessonsNextDays.first;
@@ -52,14 +60,22 @@ class _HomePageState extends State<HomePage> {
       return 'Σήμερα';
     }
     switch (dayNumber) {
-      case 1: return 'Δευτέρα';
-      case 2: return 'Τρίτη';
-      case 3: return 'Τετάρτη';
-      case 4: return 'Πέμπτη';
-      case 5: return 'Παρασκευή';
-      case 6: return 'Σάββατο';
-      case 7: return 'Κυριακή';
-      default: return '';
+      case 1:
+        return 'Δευτέρα';
+      case 2:
+        return 'Τρίτη';
+      case 3:
+        return 'Τετάρτη';
+      case 4:
+        return 'Πέμπτη';
+      case 5:
+        return 'Παρασκευή';
+      case 6:
+        return 'Σάββατο';
+      case 7:
+        return 'Κυριακή';
+      default:
+        return '';
     }
   }
 
@@ -67,7 +83,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     const lightCardBackgroundColor = Color(0xFFf7f2fa);
     const darkCardBackgroundColor = Color(0xFF2f2a2a);
-    
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: CustomScrollView(
@@ -98,9 +114,14 @@ class _HomePageState extends State<HomePage> {
                     padding: const EdgeInsets.only(right: 8.0),
                     child: TextButton(
                       onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const LoginPage()));
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const LoginPage()));
                       },
-                      child: const Text('Login', style: TextStyle(color: Colors.red, fontSize: 16, fontWeight: FontWeight.bold)),
+                      child: const Text('Login',
+                          style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold)),
                     ),
                   );
                 },
@@ -113,7 +134,7 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                   StreamBuilder<User?>(
+                  StreamBuilder<User?>(
                     stream: FirebaseAuth.instance.authStateChanges(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
@@ -122,79 +143,67 @@ class _HomePageState extends State<HomePage> {
                           child: Text(
                             'Καλώς ήρθες, ${snapshot.data!.email!}',
                             textAlign: TextAlign.center,
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w500),
                           ),
                         );
                       }
                       return const SizedBox.shrink();
                     },
                   ),
-                  const Text('ΕΠΟΜΕΝΟ ΜΑΘΗΜΑ', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87)),
-                  const SizedBox(height: 8),
-                  Card(
-                    color: darkCardBackgroundColor,
-                    elevation: 1,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    child: StreamBuilder<DocumentSnapshot?>(
-                      stream: getNextLessonStream(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const ListTile(title: Text('Αναζήτηση...', style: TextStyle(color: Colors.white)));
-                        }
-                        if (!snapshot.hasData || snapshot.data == null) {
-                          return const ListTile(title: Text('Δεν έχει οριστεί πρόγραμμα.', style: TextStyle(color: Colors.white)));
-                        }
-                        final lessonData = snapshot.data!.data() as Map<String, dynamic>;
-                        final dayName = getDayName(lessonData['day']);
-                        final time = lessonData['startTime'];
-                        final category = lessonData['category'];
-                        return ListTile(
-                          leading: const Icon(Icons.access_time_filled, color: Colors.white, size: 30),
-                          title: Text(category, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white)),
-                          subtitle: Text('$dayName στις $time μ.μ.', style: const TextStyle(fontSize: 14, color: Colors.white70)),
-                        );
-                      },
-                    ),
-                  ),
                   const SizedBox(height: 32),
-                  const Text('ΤΕΛΕΥΤΑΙΕΣ ΑΝΑΚΟΙΝΩΣΕΙΣ', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87)),
+                  const Text('ΕΠΟΜΕΝΟ ΜΑΘΗΜΑ',
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87)),
                   const SizedBox(height: 8),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AllAnnouncementsPage()));
-                    },
-                    borderRadius: BorderRadius.circular(12),
-                    child: Card(
-                      color: lightCardBackgroundColor,
-                      elevation: 1,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                          stream: FirebaseFirestore.instance.collection('announcements').orderBy('timestamp', descending: true).limit(2).snapshots(),
+                  OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: darkCardBackgroundColor,
+                      side: BorderSide.none,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: EdgeInsets.zero,
+                    ),
+                    onPressed: null,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: StreamBuilder<DocumentSnapshot?>(
+                          stream: getNextLessonStream(),
                           builder: (context, snapshot) {
-                            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                              return const ListTile(title: Text('Δεν υπάρχουν πρόσφατες ανακοινώσεις.', textAlign: TextAlign.center, style: TextStyle(color: Colors.black)));
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const ListTile(
+                                title: Text('Αναζήτηση...',
+                                    style: TextStyle(color: Colors.white)),
+                              );
                             }
-                            final announcements = snapshot.data!.docs;
-                            return Column(
-                              children: List.generate(announcements.length, (index) {
-                                final announcement = announcements[index].data();
-                                final isFirstItem = index == 0;
-                                return Column(
-                                  children: [
-                                    if (!isFirstItem) Divider(indent: 20, endIndent: 20, height: 1, color: Colors.grey.shade300),
-                                    ListTile(
-                                      contentPadding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-                                      title: Text(
-                                        announcement['title'] ?? '',
-                                        textAlign: TextAlign.center,
-                                        style: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              }),
+                            if (!snapshot.hasData || snapshot.data == null) {
+                              return const ListTile(
+                                title: Text('Δεν έχει οριστεί πρόγραμμα.',
+                                    style: TextStyle(color: Colors.white)),
+                              );
+                            }
+                            final lessonData =
+                                snapshot.data!.data() as Map<String, dynamic>;
+                            final dayName = getDayName(lessonData['day']);
+                            final time = lessonData['startTime'];
+                            final category = lessonData['category'];
+                            return ListTile(
+                              leading: const Icon(Icons.access_time_filled,
+                                  color: Colors.white, size: 30),
+                              title: Text(category,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: Colors.white)),
+                              subtitle: Text('$dayName στις $time μ.μ.',
+                                  style: const TextStyle(
+                                      fontSize: 14, color: Colors.white70)),
                             );
                           },
                         ),
@@ -202,38 +211,166 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   const SizedBox(height: 32),
-                  const Text('ΧΡΗΣΙΜΑ', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87)),
+                  const Text('ΤΕΛΕΥΤΑΙΕΣ ΑΝΑΚΟΙΝΩΣΕΙΣ',
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87)),
                   const SizedBox(height: 8),
-
-                  // --- Ο ΝΕΟΣ, ΒΕΛΤΙΩΜΕΝΟΣ ΚΩΔΙΚΑΣ ΕΙΝΑΙ ΕΔΩ ---
-                  Card(
-                    elevation: 1,
-                    color: lightCardBackgroundColor,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  OutlinedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const AllAnnouncementsPage()));
+                    },
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: lightCardBackgroundColor,
+                      side: BorderSide.none,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: EdgeInsets.zero,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                        stream: FirebaseFirestore.instance
+                            .collection('announcements')
+                            .orderBy('timestamp', descending: true)
+                            .limit(2)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData ||
+                              snapshot.data!.docs.isEmpty) {
+                            return const ListTile(
+                              title: Text(
+                                  'Δεν υπάρχουν πρόσφατες ανακοινώσεις.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Colors.black)),
+                            );
+                          }
+                          final announcements = snapshot.data!.docs;
+                          return Column(
+                            children:
+                                List.generate(announcements.length, (index) {
+                              final announcement = announcements[index].data();
+                              final isFirstItem = index == 0;
+                              return Column(
+                                children: [
+                                  if (!isFirstItem)
+                                    Divider(
+                                      indent: 20,
+                                      endIndent: 20,
+                                      height: 1,
+                                      color: Colors.grey.shade300,
+                                    ),
+                                  ListTile(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 4, horizontal: 16),
+                                    title: Text(
+                                      announcement['title'] ?? '',
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  const Text('ΧΡΗΣΙΜΑ',
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87)),
+                  const SizedBox(height: 8),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: lightCardBackgroundColor,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     child: Column(
                       children: [
-                        ListTile(
-                          leading: Icon(Icons.translate, color: Colors.red.shade700, size: 30),
-                          title: const Text('Λεξικό Ορολογίας Aikido', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                          trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AikidoTermsPage()));
+                        OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            side: BorderSide.none,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: EdgeInsets.zero,
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const AikidoTermsPage()));
                           },
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Icon(Icons.translate,
+                                    color: Colors.red.shade700, size: 30),
+                              ),
+                              const Expanded(
+                                child: Text('Λεξικό Ορολογίας Aikido',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16)),
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.only(right: 12.0),
+                                child: Icon(Icons.arrow_forward_ios,
+                                    size: 16, color: Colors.grey),
+                              ),
+                            ],
+                          ),
                         ),
                         const Divider(height: 1, indent: 16, endIndent: 16),
-                        ListTile(
-                          leading: Icon(Icons.rule_folder_outlined, color: Colors.red.shade700, size: 30),
-                          title: const Text('Κανόνες Dojo / Etiquette', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                          trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const EtiquettePage()));
+                        OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            side: BorderSide.none,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: EdgeInsets.zero,
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const EtiquettePage()));
                           },
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Icon(Icons.rule_folder_outlined,
+                                    color: Colors.red.shade700, size: 30),
+                              ),
+                              const Expanded(
+                                child: Text('Κανόνες Dojo / Etiquette',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16)),
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.only(right: 12.0),
+                                child: Icon(Icons.arrow_forward_ios,
+                                    size: 16, color: Colors.grey),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  // ------------------------------------------------
-                  
                 ],
               ),
             ),

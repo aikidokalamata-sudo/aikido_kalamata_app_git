@@ -179,9 +179,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildMemberProfile() {
     if (_memberData == null) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+      return Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -246,210 +246,230 @@ class _ProfilePageState extends State<ProfilePage> {
         ? 'assets/images/black_belt.png'
         : 'assets/images/white_belt.png';
 
-    final ButtonStyle profileButtonStyle = ElevatedButton.styleFrom(
-      backgroundColor: Colors.white,
+    // --- ΤΟ ΝΕΟ ΕΝΙΑΙΟ ΣΤΥΛ ΓΙΑ ΤΑ ΕΠΙΠΕΔΑ ΚΟΥΜΠΙΑ ---
+    final ButtonStyle flatButtonStyle = OutlinedButton.styleFrom(
       foregroundColor: Colors.black,
-      elevation: 2,
+      backgroundColor: Colors.white,
+      elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.grey.shade300),
       ),
-      padding: const EdgeInsets.symmetric(vertical: 12),
+      side: BorderSide(
+          color: Colors.grey.shade300, width: 1), // Πολύ λεπτό, γκρι περίγραμμα
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+      alignment: Alignment.center, // Στοίχιση στο κέντρο
     );
 
     return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Container(
-              height: 200,
-              width: double.infinity,
-              margin: const EdgeInsets.only(bottom: 24),
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: const AssetImage(
-                      'assets/images/techniques_background.png'),
-                  fit: BoxFit.cover,
-                  colorFilter: ColorFilter.mode(
-                    Colors.white.withOpacity(0.6),
-                    BlendMode.dstATop,
-                  ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            height: 200,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image:
+                    const AssetImage('assets/images/techniques_background.png'),
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(
+                  Colors.white.withOpacity(0.6),
+                  BlendMode.dstATop,
                 ),
-                borderRadius: BorderRadius.circular(12),
               ),
-              child: Center(
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    CircleAvatar(
-                      radius: 62,
-                      backgroundColor: Colors.black,
-                      child: CircleAvatar(
-                        radius: 60,
-                        backgroundColor: Colors.grey.shade300,
-                        backgroundImage: getProfileImage(),
-                        child: getProfileImage() == null
-                            ? const Icon(Icons.person,
-                                size: 60, color: Colors.white)
-                            : null,
-                      ),
+            ),
+            child: Center(
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  CircleAvatar(
+                    radius: 62,
+                    backgroundColor: Colors.black,
+                    child: CircleAvatar(
+                      radius: 60,
+                      backgroundColor: Colors.grey.shade300,
+                      backgroundImage: getProfileImage(),
+                      child: getProfileImage() == null
+                          ? const Icon(Icons.person,
+                              size: 60, color: Colors.white)
+                          : null,
                     ),
-                    Positioned(
-                      bottom: 2,
-                      right: 2,
-                      child: Material(
-                        color: Colors.red,
+                  ),
+                  Positioned(
+                    bottom: 2,
+                    right: 2,
+                    child: Material(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(16),
+                      elevation: 2,
+                      child: InkWell(
+                        onTap: _isUploading ? null : _pickAndSaveImage,
                         borderRadius: BorderRadius.circular(16),
-                        elevation: 2,
-                        child: InkWell(
-                          onTap: _isUploading ? null : _pickAndSaveImage,
-                          borderRadius: BorderRadius.circular(16),
-                          child: Padding(
-                            padding: const EdgeInsets.all(6.0),
-                            child: _isUploading
-                                ? const SizedBox(
-                                    width: 18,
-                                    height: 18,
-                                    child: CircularProgressIndicator(
-                                        color: Colors.white, strokeWidth: 2))
-                                : const Icon(Icons.edit,
-                                    color: Colors.white, size: 18),
-                          ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: _isUploading
+                              ? const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(
+                                      color: Colors.white, strokeWidth: 2))
+                              : const Icon(Icons.edit,
+                                  color: Colors.white, size: 18),
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-            ListTile(
-              leading: const Icon(Icons.badge_outlined, size: 30),
-              title:
-                  const Text('Ονοματεπώνυμο', style: TextStyle(fontSize: 16)),
-              subtitle: Text(fullName,
-                  style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black)),
-            ),
-            const SizedBox(height: 16),
-            ListTile(
-              leading: Image.asset(beltImage, width: 30),
-              title: const Text('Βαθμός', style: TextStyle(fontSize: 16)),
-              subtitle: Text('$rankLevelº $rankType',
-                  style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black)),
-              trailing: ElevatedButton.icon(
-                icon: Icon(Icons.history, size: 18, color: Colors.red.shade700),
-                label: const Text('Ιστορικό'),
-                style: profileButtonStyle.copyWith(
-                  shape: WidgetStateProperty.all(RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20))),
-                  // --- Η ΠΡΟΣΘΗΚΗ ΠΟΥ ΤΟ ΜΕΓΑΛΩΝΕΙ ---
-                  padding: WidgetStateProperty.all(
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 16),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.badge_outlined, size: 30),
+                  title: const Text('Ονοματεπώνυμο',
+                      style: TextStyle(fontSize: 16)),
+                  subtitle: Text(fullName,
+                      style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black)),
+                ),
+                const SizedBox(height: 16),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Image.asset(beltImage, width: 30),
+                  title: const Text('Βαθμός', style: TextStyle(fontSize: 16)),
+                  subtitle: Text('$rankLevelº $rankType',
+                      style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black)),
+                  trailing: OutlinedButton.icon(
+                    icon: Icon(Icons.history,
+                        size: 18, color: Colors.red.shade700),
+                    label: const Text('Ιστορικό',
+                        style: TextStyle(fontWeight: FontWeight.w700)),
+                    style: flatButtonStyle.copyWith(
+                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20))),
+                      padding: MaterialStateProperty.all(
+                        const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 10),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) =>
+                            RankHistoryPage(memberId: _memberData!.id),
+                      ));
+                    },
                   ),
                 ),
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>
-                        RankHistoryPage(memberId: _memberData!.id),
-                  ));
-                },
-              ),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const ProgressPage()),
-                );
-              },
-              icon: Icon(Icons.flash_on_outlined, color: Colors.red.shade700),
-              label: const Text('Η Πρόοδός μου'),
-              style: profileButtonStyle,
-            ),
-            const SizedBox(height: 8),
-            ElevatedButton.icon(
-              onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const NafudakakePage())),
-              icon: Icon(Icons.groups_2_outlined, color: Colors.red.shade700),
-              label: const Text('Nafudakake'),
-              style: profileButtonStyle,
-            ),
-            const SizedBox(height: 8),
-            ElevatedButton.icon(
-              onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) =>
-                      SubscriptionsHistoryPage(memberId: _memberData!.id))),
-              icon: Icon(Icons.history, color: Colors.red.shade700),
-              label: const Text('Οι Συνδρομές μου'),
-              style: profileButtonStyle,
-            ),
-            const SizedBox(height: 8),
-            StreamBuilder<QuerySnapshot>(
-              stream: _memberData!.reference
-                  .collection('messages')
-                  .where('isRead', isEqualTo: false)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                final unreadCount =
-                    snapshot.hasData ? snapshot.data!.docs.length : 0;
-                return ElevatedButton.icon(
+                const SizedBox(height: 24),
+                OutlinedButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => const ProgressPage()),
+                    );
+                  },
+                  icon:
+                      Icon(Icons.flash_on_outlined, color: Colors.red.shade700),
+                  label: const Text('Η Πρόοδός μου',
+                      style: TextStyle(fontWeight: FontWeight.w500)),
+                  style: flatButtonStyle,
+                ),
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const NafudakakePage())),
+                  icon:
+                      Icon(Icons.groups_2_outlined, color: Colors.red.shade700),
+                  label: const Text('Nafudakake',
+                      style: TextStyle(fontWeight: FontWeight.w500)),
+                  style: flatButtonStyle,
+                ),
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
                   onPressed: () => Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) =>
-                          MemberMessagesPage(memberId: _memberData!.id))),
-                  icon: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Icon(Icons.mark_email_unread_outlined,
-                          color: Colors.red.shade700),
-                      if (unreadCount > 0)
-                        Positioned(
-                            top: -8,
-                            right: -12,
-                            child: CircleAvatar(
-                                radius: 10,
-                                backgroundColor: Colors.red,
-                                child: Text(unreadCount.toString(),
-                                    style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold)))),
-                    ],
-                  ),
-                  label: const Text('Μηνύματα από το Dojo'),
-                  style: profileButtonStyle,
-                );
-              },
+                          SubscriptionsHistoryPage(memberId: _memberData!.id))),
+                  icon: Icon(Icons.history, color: Colors.red.shade700),
+                  label: const Text('Οι Συνδρομές μου',
+                      style: TextStyle(fontWeight: FontWeight.w500)),
+                  style: flatButtonStyle,
+                ),
+                const SizedBox(height: 8),
+                StreamBuilder<QuerySnapshot>(
+                  stream: _memberData!.reference
+                      .collection('messages')
+                      .where('isRead', isEqualTo: false)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    final unreadCount =
+                        snapshot.hasData ? snapshot.data!.docs.length : 0;
+                    return OutlinedButton.icon(
+                      onPressed: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (context) => MemberMessagesPage(
+                                  memberId: _memberData!.id))),
+                      icon: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Icon(Icons.mark_email_unread_outlined,
+                              color: Colors.red.shade700),
+                          if (unreadCount > 0)
+                            Positioned(
+                                top: -8,
+                                right: -12,
+                                child: CircleAvatar(
+                                    radius: 10,
+                                    backgroundColor: Colors.red,
+                                    child: Text(unreadCount.toString(),
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold)))),
+                        ],
+                      ),
+                      label: const Text('Μηνύματα από το Dojo',
+                          style: TextStyle(fontWeight: FontWeight.w500)),
+                      style: flatButtonStyle,
+                    );
+                  },
+                ),
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  onPressed: _showContactDialog,
+                  icon: Icon(Icons.send_to_mobile, color: Colors.red.shade700),
+                  label: const Text('Επικοινωνία με το Dojo',
+                      style: TextStyle(fontWeight: FontWeight.w500)),
+                  style: flatButtonStyle,
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            ElevatedButton.icon(
-              onPressed: _showContactDialog,
-              icon: Icon(Icons.send_to_mobile, color: Colors.red.shade700),
-              label: const Text('Επικοινωνία με το Dojo'),
-              style: profileButtonStyle,
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildAdminProfile() {
-    final ButtonStyle adminButtonStyle = ElevatedButton.styleFrom(
-      backgroundColor: Colors.white,
+    final ButtonStyle adminFlatButtonStyle = OutlinedButton.styleFrom(
       foregroundColor: Colors.black,
-      elevation: 2,
+      backgroundColor: const Color(0xFFf7f2fa),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.grey.shade300),
       ),
-      padding: const EdgeInsets.symmetric(vertical: 12),
+      side: BorderSide(color: Colors.grey.shade300, width: 1),
+      padding: const EdgeInsets.symmetric(vertical: 14),
+      elevation: 0,
     );
 
     return Padding(
@@ -457,13 +477,20 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          ElevatedButton.icon(
-            onPressed: null, // Disabled button
-            icon: Icon(Icons.shield, color: Colors.red.shade700),
-            label: const Text('ADMIN ACCESS'),
-            style: adminButtonStyle.copyWith(
-              backgroundColor: WidgetStateProperty.all(Colors.white),
-              foregroundColor: WidgetStateProperty.all(Colors.red.shade700),
+          OutlinedButton.icon(
+            onPressed: null,
+            icon: Icon(Icons.shield, color: Colors.white),
+            label: const Text('ADMIN ACCESS',
+                style: TextStyle(color: Colors.white)),
+            style: OutlinedButton.styleFrom(
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              side: BorderSide(color: Colors.black, width: 1),
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              elevation: 0,
             ),
           ),
           const SizedBox(height: 16),
@@ -472,15 +499,24 @@ class _ProfilePageState extends State<ProfilePage> {
               style:
                   const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const Spacer(),
-          ElevatedButton.icon(
+          OutlinedButton.icon(
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => const FinancialSummaryPage()));
             },
-            icon:
-                const Icon(Icons.account_balance_wallet_outlined, color: Colors.teal),
+            icon: Icon(Icons.account_balance_wallet_outlined,
+                color: Colors.red.shade700),
             label: const Text('Οικονομική Διαχείριση'),
-            style: adminButtonStyle,
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.black,
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              side: BorderSide(color: Colors.grey.shade300, width: 1),
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              elevation: 0,
+            ),
           ),
           const SizedBox(height: 8),
           StreamBuilder<QuerySnapshot>(
@@ -491,14 +527,23 @@ class _ProfilePageState extends State<ProfilePage> {
             builder: (context, snapshot) {
               final unreadCount =
                   snapshot.hasData ? snapshot.data!.docs.length : 0;
-              return ElevatedButton.icon(
+              return OutlinedButton.icon(
                 onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) => const InboxPage())),
-                style: adminButtonStyle,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.black,
+                  backgroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  side: BorderSide(color: Colors.grey.shade300, width: 1),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  elevation: 0,
+                ),
                 icon: Stack(
                   alignment: Alignment.center,
                   children: [
-                    const Icon(Icons.inbox, color: Color(0xFF2f2a2a)),
+                    Icon(Icons.inbox, color: Colors.red.shade700),
                     if (unreadCount > 0)
                       Positioned(
                           top: -8,
@@ -518,20 +563,38 @@ class _ProfilePageState extends State<ProfilePage> {
             },
           ),
           const SizedBox(height: 8),
-          ElevatedButton.icon(
+          OutlinedButton.icon(
             onPressed: () => Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => const MemberManagementPage())),
             icon: Icon(Icons.group, color: Colors.red.shade700),
             label: const Text('Διαχείριση Μελών'),
-            style: adminButtonStyle,
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.black,
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              side: BorderSide(color: Colors.grey.shade300, width: 1),
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              elevation: 0,
+            ),
           ),
           const SizedBox(height: 8),
-          ElevatedButton.icon(
+          OutlinedButton.icon(
             onPressed: () => Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => const AnnouncementsManagementPage())),
-            icon: Icon(Icons.campaign_outlined, color: Colors.orange.shade800),
+            icon: Icon(Icons.campaign_outlined, color: Colors.red.shade700),
             label: const Text('Διαχείριση Ανακοινώσεων'),
-            style: adminButtonStyle,
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.black,
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              side: BorderSide(color: Colors.grey.shade300, width: 1),
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              elevation: 0,
+            ),
           ),
         ],
       ),

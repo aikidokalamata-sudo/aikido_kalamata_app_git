@@ -38,43 +38,46 @@ class TechniquesPage extends StatelessWidget {
                   final String rankTitle = rank['title'];
                   final Widget rankPage = rank['page'];
 
-                  return Card(
-                    elevation: 2,
-                    margin: const EdgeInsets.symmetric(vertical: 6.0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    child: ListTile(
-                      // --- ΑΛΛΑΓΗ ΕΔΩ ---
-                      // Αντικαθιστούμε το Icon widget με το Image.asset widget
-                      leading: Padding(
-                        padding: const EdgeInsets.all(5.0), // Λίγο padding για να μην "κολλάει"
-                        child: Image.asset(
-                          // Σημείωση: Αν η εικόνα είναι στο assets/images, άλλαξε το path αναλόγως.
-                          'assets/icon/icon.png',
-                          height: 35.0,
-                          width: 35.0,
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6.0),
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
+                        side: BorderSide(color: Colors.grey.shade300, width: 1),
+                        backgroundColor: const Color(0xFFf7f2fa),
                       ),
-                      title: Text(
-                        rankTitle,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      trailing: const Icon(
-                        Icons.arrow_forward_ios,
-                        size: 16.0,
-                        color: Colors.grey,
-                      ),
-                      onTap: () {
+                      onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => rankPage,
                           ),
                         );
                       },
+                      child: ListTile(
+                        leading: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Image.asset(
+                            'assets/icon/icon.png',
+                            height: 35.0,
+                            width: 35.0,
+                          ),
+                        ),
+                        title: Text(
+                          rankTitle,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        trailing: const Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16.0,
+                          color: Colors.grey,
+                        ),
+                      ),
                     ),
                   );
                 },
