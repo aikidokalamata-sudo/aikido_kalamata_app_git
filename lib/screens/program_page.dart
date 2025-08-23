@@ -13,7 +13,15 @@ class ProgramPage extends StatefulWidget {
 }
 
 class _ProgramPageState extends State<ProgramPage> {
-  final List<String> daysOfWeek = ['Δευτέρα', 'Τρίτη', 'Τετάρτη', 'Πέμπτη', 'Παρασκευή', 'Σάββατο', 'Κυριακή'];
+  final List<String> daysOfWeek = [
+    'Δευτέρα',
+    'Τρίτη',
+    'Τετάρτη',
+    'Πέμπτη',
+    'Παρασκευή',
+    'Σάββατο',
+    'Κυριακή'
+  ];
   bool _isAdmin = false;
 
   @override
@@ -39,12 +47,12 @@ class _ProgramPageState extends State<ProgramPage> {
       }
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     // --- Ορίζουμε το νέο χρώμα εδώ ---
     const cardBackgroundColor = Color(0xFF2f2a2a);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Εβδομαδιαίο Πρόγραμμα'),
@@ -56,14 +64,19 @@ class _ProgramPageState extends State<ProgramPage> {
               tooltip: 'Επεξεργασία Προγράμματος',
               onPressed: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const ScheduleManagementPage()),
+                  MaterialPageRoute(
+                      builder: (context) => const ScheduleManagementPage()),
                 );
               },
             ),
         ],
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('schedule').orderBy('day').orderBy('startTime').snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('schedule')
+            .orderBy('day')
+            .orderBy('startTime')
+            .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -72,7 +85,8 @@ class _ProgramPageState extends State<ProgramPage> {
             return const Center(child: Text('Παρουσιάστηκε σφάλμα!'));
           }
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text('Το πρόγραμμα δεν έχει οριστεί ακόμα.'));
+            return const Center(
+                child: Text('Το πρόγραμμα δεν έχει οριστεί ακόμα.'));
           }
 
           Map<int, List<DocumentSnapshot>> lessonsByDay = {};
@@ -100,26 +114,38 @@ class _ProgramPageState extends State<ProgramPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(dayName, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.red)),
+                      Text(dayName,
+                          style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red)),
                       const Divider(color: Colors.white24),
                       ...lessonsForDay.map((lessonDoc) {
-                        final lessonData = lessonDoc.data() as Map<String, dynamic>;
+                        final lessonData =
+                            lessonDoc.data() as Map<String, dynamic>;
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4.0),
                           child: Row(
                             children: [
-                              const Icon(Icons.access_time, size: 16, color: Colors.white70),
+                              const Icon(Icons.access_time,
+                                  size: 16, color: Colors.white70),
                               const SizedBox(width: 8),
                               Text(
                                 '${lessonData['startTime']} - ${lessonData['endTime']}',
-                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                                style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
                               ),
                               const Spacer(),
                               Chip(
                                 label: Text(lessonData['category'] ?? ''),
-                                backgroundColor: Colors.white, // Λευκό chip για να ξεχωρίζει
-                                labelStyle: const TextStyle(color: Colors.black),
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                backgroundColor:
+                                    Colors.white, // Λευκό chip για να ξεχωρίζει
+                                labelStyle:
+                                    const TextStyle(color: Colors.black),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 6, vertical: 2),
                                 visualDensity: VisualDensity.compact,
                               ),
                             ],
