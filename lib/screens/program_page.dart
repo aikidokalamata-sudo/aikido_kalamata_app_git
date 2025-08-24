@@ -50,7 +50,6 @@ class _ProgramPageState extends State<ProgramPage> {
 
   @override
   Widget build(BuildContext context) {
-    // --- Ορίζουμε το νέο χρώμα εδώ ---
     const cardBackgroundColor = Color(0xFF2f2a2a);
 
     return Scaffold(
@@ -78,24 +77,33 @@ class _ProgramPageState extends State<ProgramPage> {
             .orderBy('startTime')
             .snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          // --- Η ΔΙΟΡΘΩΣΗ ΕΙΝΑΙ ΕΔΩ ---
+          // Ελέγχουμε πρώτα αν έχουμε δεδομένα. Αν έχουμε, τα δείχνουμε,
+          // ακόμα κι αν το stream περιμένει για ανανέωση.
+          if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
+          // --------------------------
+
           if (snapshot.hasError) {
             return const Center(child: Text('Παρουσιάστηκε σφάλμα!'));
           }
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+
+          final lessons = snapshot.data!.docs;
+
+          if (lessons.isEmpty) {
             return const Center(
                 child: Text('Το πρόγραμμα δεν έχει οριστεί ακόμα.'));
           }
 
           Map<int, List<DocumentSnapshot>> lessonsByDay = {};
-          for (var doc in snapshot.data!.docs) {
+          for (var doc in lessons) {
             final day = doc['day'] as int;
             lessonsByDay.putIfAbsent(day, () => []).add(doc);
           }
 
           return ListView.builder(
+            padding: const EdgeInsets.all(8.0),
             itemCount: daysOfWeek.length,
             itemBuilder: (context, index) {
               final dayIndex = index + 1;
@@ -105,10 +113,13 @@ class _ProgramPageState extends State<ProgramPage> {
               if (lessonsForDay.isEmpty) return const SizedBox.shrink();
 
               return Card(
-                // --- ΕΦΑΡΜΟΓΗ ΝΕΩΝ ΧΡΩΜΑΤΩΝ ---
                 color: cardBackgroundColor,
-                elevation: 2,
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: BorderSide(color: Colors.grey.shade300, width: 1),
+                ),
+                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Column(
@@ -119,7 +130,7 @@ class _ProgramPageState extends State<ProgramPage> {
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                               color: Colors.red)),
-                      const Divider(color: Colors.white24),
+                      const Divider(color: Colors.white24, height: 20),
                       ...lessonsForDay.map((lessonDoc) {
                         final lessonData =
                             lessonDoc.data() as Map<String, dynamic>;
@@ -140,8 +151,7 @@ class _ProgramPageState extends State<ProgramPage> {
                               const Spacer(),
                               Chip(
                                 label: Text(lessonData['category'] ?? ''),
-                                backgroundColor:
-                                    Colors.white, // Λευκό chip για να ξεχωρίζει
+                                backgroundColor: Colors.white,
                                 labelStyle:
                                     const TextStyle(color: Colors.black),
                                 padding: const EdgeInsets.symmetric(

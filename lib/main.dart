@@ -77,6 +77,18 @@ class MyApp extends StatelessWidget {
             foregroundColor: Colors.red,
           ),
         ),
+
+        // --- Η ΠΡΟΣΘΗΚΗ ΓΙΑ ΤΑ ANIMATIONS ΕΙΝΑΙ ΕΔΩ ---
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: {
+            // Εφαρμόζουμε το νέο animation σε Android και Windows
+            TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+            TargetPlatform.windows: FadeUpwardsPageTransitionsBuilder(),
+            // Για το iOS, κρατάμε το default (slide-in from right) που είναι πιο φυσικό
+            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          },
+        ),
+        // ---------------------------------------------
       ),
       home: const MainScreen(),
     );
@@ -186,19 +198,14 @@ class _MainScreenState extends State<MainScreen> {
     final bool showLockForTechniques = !_isMemberActive;
     final bool showLockForProfile = _currentUser == null;
 
-    // --- Η ΑΛΛΑΓΗ ΕΙΝΑΙ ΕΔΩ ---
     return WillPopScope(
       onWillPop: () async {
-        // Αν δεν είμαστε στην αρχική σελίδα (index 0)
         if (_selectedIndex != 0) {
-          // Πήγαινε στην αρχική σελίδα
           setState(() {
             _selectedIndex = 0;
           });
-          // Πες στο σύστημα "Μην κλείσεις την εφαρμογή" (επέστρεψε false)
           return false;
         }
-        // Αν είμαστε ήδη στην αρχική, άφησε την εφαρμογή να κλείσει (επέστρεψε true)
         return true;
       },
       child: Scaffold(
